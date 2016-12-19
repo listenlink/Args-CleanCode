@@ -26,6 +26,7 @@ private:
     char errorArgumentId = '\0';
     string errorParameter = "TILT";
     ErrorCode errorCode = ErrorCode::OK;
+public:
     Args(string schema, vector<string> args);
     bool parse();
     bool parseSchema();

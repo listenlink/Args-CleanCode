@@ -12,8 +12,9 @@ Args::Args(string schema, vector<string> args) {
 }
 
 bool Args::parse() {
-    if (schema.length() == 0 && args.size() == 0)
+    if (schema.length() == 0 && args.size() == 0) {
         return true;
+    }
     parseSchema();
     try {
         parseArguments();
@@ -25,14 +26,16 @@ bool Args::parse() {
 }
 
 bool Args::parseSchema() {
-    /*
-    for (string element : schema.split(",")) {
-        if (element.length() > 0) {
-            String trimmedElement = element.trim();
-            parseSchemaElement(trimmedElement);
-        }
-    }
-    */
+    std::string::size_type start_pos, find_pos;
+    start_pos = find_pos = 0;
+    do {
+        find_pos = schema.find(',', start_pos);
+        auto begin = schema.find_first_not_of(' ', start_pos);
+        auto end = schema.find_last_not_of(" ,", find_pos);
+        // find_pos is position of , so we need skip it by +1
+        start_pos = find_pos + 1;
+        parseSchemaElement(schema.substr(begin, end - begin + 1));
+    } while (find_pos != std::string::npos);
     return true;
 }
 void Args::parseSchemaElement(string element) {
@@ -138,10 +141,4 @@ void Args::setStringArg(char argChar) {
     }
 }
 
-int main()
-{
-    
-    return 0;
-
-}
 
