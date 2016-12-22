@@ -181,36 +181,22 @@ string Args::usage() {
 string Args::errorMessage() {
     switch (errorCode) {
     case OK:
-        throw new string("TILT: Should not get here.");
+        throw string("TILT: Should not get here.");
     case UNEXPECTED_ARGUMENT:
         return unexpectedArgumentMessage();
     case MISSING_STRING:
-        return string("Could not find string parameter for");
-        /*
-        return string.format("Could not find string parameter for -%c.",
-        errorArgumentId);
-        */
+        return string(fmt::sprintf("Could not find string parameter for : %c", errorArgumentId));
     case INVALID_INTEGER:
-        return string("Argument -%c expects an integer but was");
-        /*
-        return string.format("Argument -%c expects an integer but was '%s'.",
-        errorArgumentId, errorParameter);
-        */
+        return string(fmt::sprintf("Argument -%c expects an integer but was '%s'", errorArgumentId, errorParameter));
     case MISSING_INTEGER:
-        return string("Could not find integer parameter for");
+        return string(fmt::sprintf("Could not find integer parameter for : %c", errorArgumentId));
     }
     return "";
 }
 string Args::unexpectedArgumentMessage() {
-    /*
-    StringBuffer message = new StringBuffer("Argument(s) -");
-    for (char c : unexpectedArguments) {
-    message.append(c);
-    }
-    message.append(" unexpected.");
-    return message.toString();
-    */
-    return "unexpectedArgumentMessage";
+   string message = "Argument(s) : ";
+   string unexpected_chars(unexpectedArguments.begin(), unexpectedArguments.end());
+   return message + unexpected_chars + " unexpected.";
 }
 string Args::getString(char arg) {
     auto iter = stringArgs.find(arg);
