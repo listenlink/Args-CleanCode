@@ -18,7 +18,6 @@ TEST(test_boolean_args, schema_with_leading_tailing_space)
     vector<string> args{ "-l" };
     Args arg(schema, args);
     EXPECT_EQ(true, arg.isValid());
-    EXPECT_EQ(true, arg.isValid());
     EXPECT_EQ(true, arg.getBoolean('l'));
 }
 
@@ -52,6 +51,51 @@ TEST(test_string_args, with_one)
     EXPECT_EQ(string("www.intel.com"), arg.getString('d'));
 }
 
+TEST(test_misc, default_value)
+{
+    string schema("d*,l,p#");
+    vector<string> args{};
+    Args arg(schema, args);
+    EXPECT_EQ(true, arg.isValid());
+    EXPECT_EQ(string(""), arg.getString('d'));
+    EXPECT_EQ(0, arg.getInt('p'));
+    EXPECT_EQ(false, arg.getBoolean('l'));
+}
+
+TEST(test_misc, cardinality)
+{
+    string schema("d*,l,p#");
+    vector<string> args{"-d","abc","-l","-p","1234"};
+    Args arg(schema, args);
+    EXPECT_EQ(3, arg.cardinality());
+}
+
+TEST(test_misc, has)
+{
+    string schema("d*,l,p#");
+    vector<string> args{ "-d","abc","-l","-p","1234" };
+    Args arg(schema, args);
+    EXPECT_EQ(true, arg.has('d'));
+    EXPECT_EQ(true, arg.has('l'));
+    EXPECT_EQ(true, arg.has('p'));
+    EXPECT_EQ(false, arg.has('x'));
+}
+TEST(test_misc, usage)
+{
+    string schema("d*,l,p#");
+    vector<string> args{};
+    Args arg(schema, args);
+    EXPECT_EQ("-[d*,l,p#]", arg.usage());
+}
+
+TEST(test_misc, no_arg)
+{
+    string schema("");
+    vector<string> args{};
+    Args arg(schema, args);
+    EXPECT_EQ(true, arg.isValid());
+    EXPECT_EQ(0, arg.cardinality());
+}
 TEST(test_ParseException, invalid_argument_format)
 {
     string schema("dd");
