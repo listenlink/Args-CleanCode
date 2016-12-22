@@ -73,14 +73,13 @@ private:
     string schema;
     vector<string> args;
     bool valid = true;
-    set<char> unexpectedArguments = {};// new TreeSet<char>();
-    map<char, bool> booleanArgs = {}; //        new HashMap<char, Boolean>();
-    map<char, string> stringArgs = {}; //new HashMap<char, String>();
-    map<char, int> intArgs = {}; // new HashMap<char, Integer>();
-    set<char> argsFound = {};// new HashSet<char>();
+    set<char> unexpectedArguments = {};
+    map<char, bool> booleanArgs = {};
+    map<char, string> stringArgs = {};
+    map<char, int> intArgs = {};
+    set<char> argsFound = {};
     int currentArgument;
     char errorArgumentId = '\0';
     string errorParameter = "TILT";
     ErrorCode errorCode = ErrorCode::OK;
-
 };
