@@ -4,7 +4,20 @@
 #include <set>
 #include <map>
 using namespace std;
+class ParseException {
+public:
+    ParseException(const string& exception_msg):msg(exception_msg){}
+    const string& message() { return msg; };
+private:
+    string msg;
+};
+
 class ArgsException {
+public:
+    ArgsException(const string& exception_msg) :msg(exception_msg) {}
+    const string& message() { return msg; };
+private:
+    string msg;
 };
 
 class Args {

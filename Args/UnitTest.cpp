@@ -45,3 +45,15 @@ TEST(test_string_args, with_one)
     Args arg(schema, args);
     EXPECT_EQ(string("www.intel.com"), arg.getString('d'));
 }
+
+TEST(test_ParseException, invalid_argument_format)
+{
+    string schema("dd");
+    ASSERT_THROW(Args(schema, {}), ParseException);
+}
+
+TEST(test_ParseExceptionTest, bad_argument_character)
+{
+    string schema("@");
+    ASSERT_THROW(Args(schema, {}), ParseException);
+}

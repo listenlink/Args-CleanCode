@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-
+#include "fmt\fmt_all.h"
 #include "Args.h"
 
 Args::Args(string schema, vector<string> args) {
@@ -52,19 +52,14 @@ void Args::parseSchemaElement(string element) {
         parseIntegerSchemaElement(elementId);
     }
     else {
-        throw new string("Argument: %c has invalid format");
-        /*
-        throw new ParseException(
-            String.format("Argument: %c has invalid format: %s.",
-                elementId, elementTail), 0);
-                */
+        throw ParseException(fmt::sprintf("Argument: %c has invalid format : %s.", elementId, elementTail));
     }
 }
 
 void Args::validateSchemaElementId(char elementId) {
     if (!isalpha(elementId)){
-        throw new string(
-            "Bad char: -------- in Args format: ");
+        throw ParseException(fmt::sprintf("Bad character: %c",elementId) 
+            + "in Args format: " + schema);
     }
 }
 void Args::parseBooleanSchemaElement(char elementId) {
@@ -141,14 +136,14 @@ void Args::setIntArg(char argChar) {
         valid = false;
         errorArgumentId = argChar;
         errorCode = ErrorCode::MISSING_INTEGER;
-        throw new ArgsException();
+        throw ArgsException("");
     }
     catch (std::invalid_argument e) {
         valid = false;
         errorArgumentId = argChar;
         errorParameter = parameter;
         errorCode = ErrorCode::INVALID_INTEGER;
-        throw new ArgsException();
+        throw ArgsException("");
     }
 }
 
@@ -161,7 +156,7 @@ void Args::setStringArg(char argChar) {
         valid = false;
         errorArgumentId = argChar;
         errorCode = ErrorCode::MISSING_STRING;
-        throw new ArgsException();
+        throw ArgsException("");
     }
 }
 
