@@ -165,6 +165,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Args.cpp" />
+    <ClCompile Include="ArgsTest.cpp" />
     <ClCompile Include="fmt\format.cc" />
     <ClCompile Include="fmt\ostream.cc" />
     <ClCompile Include="fmt\printf.cc" />
