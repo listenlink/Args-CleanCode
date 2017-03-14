@@ -153,30 +153,26 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Args.h" />
+    <ClInclude Include="args.h" />
     <ClInclude Include="fmt\fmt_all.h" />
     <ClInclude Include="fmt\format.h" />
     <ClInclude Include="fmt\ostream.h" />
     <ClInclude Include="fmt\printf.h" />
     <ClInclude Include="fmt\string.h" />
     <ClInclude Include="fmt\time.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Args.cpp" />
-    <ClCompile Include="ArgsTest.cpp" />
-    <ClCompile Include="fmt\format.cc" />
-    <ClCompile Include="fmt\ostream.cc" />
-    <ClCompile Include="fmt\printf.cc" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="args.cpp" />
+    <ClCompile Include="fmt\format.cpp" />
+    <ClCompile Include="fmt\ostream.cpp" />
+    <ClCompile Include="fmt\printf.cpp" />
+    <ClCompile Include="main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="UnitTest.cpp" />
+    <ClCompile Include="unit_test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
