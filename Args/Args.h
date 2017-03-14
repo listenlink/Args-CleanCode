@@ -95,14 +95,15 @@ public:
 
     bool setArgument(char argChar);
 
-    bool isIntArg(char argChar);
+    bool isIntArg(ArgumentMarshaler* m);
     void setIntArg(char argChar);
 
+    bool isStringArg(ArgumentMarshaler* m);
     void setStringArg(char argChar);
-    bool isStringArg(char argChar);
 
-    void setBooleanArg(char argChar, object value);
-    bool isBooleanArg(char argChar);
+    bool isBooleanArg(ArgumentMarshaler* m);
+    void setBooleanArg(char argChar);
+
 
     int cardinality();
     string usage();

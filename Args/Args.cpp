@@ -110,19 +110,19 @@ void Args::parseElement(char argChar) {
 }
 
 bool Args::setArgument(char argChar) {
-    if (isBooleanArg(argChar))
-        setBooleanArg(argChar, object(true));
-    else if (isStringArg(argChar))
+    auto m = marshaler[argChar];
+    if (isBooleanArg(m))
+        setBooleanArg(argChar);
+    else if (isStringArg(m))
         setStringArg(argChar);
-    else if (isIntArg(argChar))
+    else if (isIntArg(m))
         setIntArg(argChar);
     else
         return false;
     return true;
 }
 
-bool Args::isIntArg(char argChar) {
-    auto m = marshaler[argChar];
+bool Args::isIntArg(ArgumentMarshaler* m) {
     return dynamic_cast<IntegerArgumentMarshaler*>(m);
 }
 
@@ -148,6 +148,10 @@ void Args::setIntArg(char argChar) {
     }
 }
 
+bool Args::isStringArg(ArgumentMarshaler* m) {
+    return dynamic_cast<StringArgumentMarshaler*>(m);
+}
+
 void Args::setStringArg(char argChar) {
     currentArgument++;
     try {
@@ -161,15 +165,10 @@ void Args::setStringArg(char argChar) {
     }
 }
 
-bool Args::isStringArg(char argChar) {
-    auto m = marshaler[argChar];
-    return dynamic_cast<StringArgumentMarshaler*>(m);
+void Args::setBooleanArg(char argChar) {
+    marshaler[argChar]->set(true);
 }
-void Args::setBooleanArg(char argChar, object value) {
-    marshaler[argChar]->set(value);
-}
-bool Args::isBooleanArg(char argChar) {
-    auto m = marshaler[argChar];
+bool Args::isBooleanArg(ArgumentMarshaler* m) {
     return dynamic_cast<BoolArgumentMarshaler*>(m);
 }
 int Args::cardinality() {
