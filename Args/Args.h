@@ -65,8 +65,6 @@ public:
     ~StringArgumentMarshaler() {}
 private:
     object value;
-    bool valid;
-    ErrorCode errorCode;
 };
 
 class IntegerArgumentMarshaler : public ArgumentMarshaler {
@@ -79,8 +77,6 @@ public:
     ~IntegerArgumentMarshaler() {}
 private:
     object value;
-    bool valid;
-    ErrorCode errorCode;
 };
 
 class Args {
@@ -88,7 +84,7 @@ public:
     Args(string schema, vector<string> args);
     ~Args();
 
-    bool parse();
+    void parse();
     bool parseSchema();
     void parseSchemaElement(string element);
     void validateSchemaElementId(char elementId);
@@ -117,13 +113,11 @@ public:
     int getInt(char arg);
     bool getBoolean(char arg);
     bool has(char arg);
-    bool isValid();
 
 private:
 
     string schema;
     vector<string> args;
-    bool valid = true;
     set<char> unexpectedArguments = {};
     map<char, ArgumentMarshaler*> marshaler = {};
     set<char> argsFound = {};

@@ -8,14 +8,14 @@
 Args::Args(string schema, vector<string> args) {
     this->schema = schema;
     this->args = args;
-    valid = parse();
+    parse();
 }
 
 Args::~Args(){}
 
-bool Args::parse() {
+void Args::parse() {
     if (schema.length() == 0 && args.size() == 0) {
-        return true;
+        return;
     }
     parseSchema();
     try {
@@ -24,7 +24,6 @@ bool Args::parse() {
     catch (ArgsException e) {
         e;
     }
-    return valid;
 }
 
 bool Args::parseSchema() {
@@ -105,7 +104,6 @@ void Args::parseElement(char argChar) {
     else {
         unexpectedArguments.insert(argChar);
         errorCode = ErrorCode::UNEXPECTED_ARGUMENT;
-        valid = false;
     }
 }
 
@@ -122,12 +120,10 @@ bool Args::setArgument(char argChar) {
         }
     }
     catch (ArgsException e) {
-        valid = false;
         errorArgumentId = argChar;
         throw e;
     }
     catch (std::out_of_range e) {
-        valid = false;
         errorArgumentId = argChar;
         if(dynamic_cast<StringArgumentMarshaler*>(m))
             errorCode = ErrorCode::MISSING_STRING;
@@ -136,7 +132,6 @@ bool Args::setArgument(char argChar) {
         throw ArgsException("");
     } 
     catch (std::invalid_argument e) {
-        valid = false;
         errorArgumentId = argChar;
         errorParameter = args.at(currentArgument);
         errorCode = ErrorCode::INVALID_INTEGER;
@@ -203,7 +198,5 @@ bool Args::getBoolean(char arg) {
 bool Args::has(char arg) {
     return argsFound.find(arg) != argsFound.end();
 }
-bool Args::isValid() {
-    return valid;
-}
+
 
