@@ -95,11 +95,11 @@ public:
 
     bool setArgument(char argChar);
 
-    void setIntArg(char argChar);
+    void setIntArg(ArgumentMarshaler* m);
 
-    void setStringArg(char argChar);
+    void setStringArg(ArgumentMarshaler* m);
 
-    void setBooleanArg(char argChar);
+    void setBooleanArg(ArgumentMarshaler* m);
 
 
     int cardinality();

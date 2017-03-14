@@ -115,11 +115,11 @@ bool Args::setArgument(char argChar) {
         return false;
     try {
         if (bool(dynamic_cast<BoolArgumentMarshaler*>(m)))
-            setBooleanArg(argChar);
+            setBooleanArg(m);
         else if (bool(dynamic_cast<StringArgumentMarshaler*>(m)))
-            setStringArg(argChar);
+            setStringArg(m);
         else if (bool(dynamic_cast<IntegerArgumentMarshaler*>(m)))
-            setIntArg(argChar);
+            setIntArg(m);
     }
     catch (ArgsException e) {
         valid = false;
@@ -129,43 +129,43 @@ bool Args::setArgument(char argChar) {
 
 }
 
-void Args::setIntArg(char argChar) {
+void Args::setIntArg(ArgumentMarshaler* m) {
     currentArgument++;
     string parameter = "";
     try {
         parameter = args.at(currentArgument);
-        marshaler[argChar]->set(std::stoi(parameter));
+        m->set(std::stoi(parameter));
     }
     catch (std::out_of_range e) {
         valid = false;
-        errorArgumentId = argChar;
+        // errorArgumentId = argChar;
         errorCode = ErrorCode::MISSING_INTEGER;
         throw ArgsException("");
     }
     catch (std::invalid_argument e) {
         valid = false;
-        errorArgumentId = argChar;
+        // errorArgumentId = argChar;
         errorParameter = parameter;
         errorCode = ErrorCode::INVALID_INTEGER;
         throw ArgsException("");
     }
 }
 
-void Args::setStringArg(char argChar) {
+void Args::setStringArg(ArgumentMarshaler* m) {
     currentArgument++;
     try {
-        marshaler[argChar] ->set(args.at(currentArgument));
+        m->set(args.at(currentArgument));
     }
     catch (std::out_of_range e) {
         valid = false;
-        errorArgumentId = argChar;
+        // errorArgumentId = argChar;
         errorCode = ErrorCode::MISSING_STRING;
         throw ArgsException("");
     }
 }
 
-void Args::setBooleanArg(char argChar) {
-    marshaler[argChar]->set(true);
+void Args::setBooleanArg(ArgumentMarshaler* m) {
+    m->set(true);
 }
 
 int Args::cardinality() {
