@@ -63,13 +63,13 @@ void Args::validateSchemaElementId(char elementId) {
     }
 }
 void Args::parseBooleanSchemaElement(char elementId) {
-    booleanArgs[elementId] = false;
+    booleanArgs[elementId] = new BoolArgumentMarshaler();
 }
 void Args::parseIntegerSchemaElement(char elementId) {
     intArgs[elementId] = 0;
 }
 void Args::parseStringSchemaElement(char elementId) {
-    stringArgs[elementId] = "";
+    stringArgs[elementId] = new StringArgumentMarshaler();
 }
 bool Args::isStringSchemaElement(string elementTail) {
     return elementTail == "*";
@@ -111,7 +111,7 @@ void Args::parseElement(char argChar) {
 
 bool Args::setArgument(char argChar) {
     if (isBooleanArg(argChar))
-        setBooleanArg(argChar, true);
+        setBooleanArg(argChar, object(true));
     else if (isStringArg(argChar))
         setStringArg(argChar);
     else if (isIntArg(argChar))
@@ -150,7 +150,7 @@ void Args::setIntArg(char argChar) {
 void Args::setStringArg(char argChar) {
     currentArgument++;
     try {
-        stringArgs[argChar] = args.at(currentArgument);
+        stringArgs[argChar] ->set(args.at(currentArgument));
     }
     catch (std::out_of_range e) {
         valid = false;
@@ -163,8 +163,8 @@ void Args::setStringArg(char argChar) {
 bool Args::isStringArg(char argChar) {
     return stringArgs.find(argChar) != stringArgs.end();
 }
-void Args::setBooleanArg(char argChar, bool value) {
-    booleanArgs[argChar] = value;
+void Args::setBooleanArg(char argChar, object value) {
+    booleanArgs[argChar]->set(value);
 }
 bool Args::isBooleanArg(char argChar) {
     return booleanArgs.find(argChar) != booleanArgs.end();
@@ -199,16 +199,22 @@ string Args::unexpectedArgumentMessage() {
    return message + unexpected_chars + " unexpected.";
 }
 string Args::getString(char arg) {
-    auto iter = stringArgs.find(arg);
-    return iter == stringArgs.end() ? string("") : iter->second;
+    auto am = stringArgs[arg];
+    if (am != nullptr)
+        return am->get().String;
+    else
+        return false;
 }
 int Args::getInt(char arg) {
     auto iter = intArgs.find(arg);
     return iter == intArgs.end() ? 0 : iter->second;
 }
 bool Args::getBoolean(char arg) {
-    auto iter = booleanArgs.find(arg);
-    return iter == booleanArgs.end() ? false : iter->second;
+    auto am = booleanArgs[arg];
+    if (am != nullptr)
+        return am->get().Boolean;
+    else
+        return false;
 }
 bool Args::has(char arg) {
     return argsFound.find(arg) != argsFound.end();

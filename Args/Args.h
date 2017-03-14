@@ -19,6 +19,67 @@ public:
 private:
     string msg;
 };
+#if 1
+typedef struct _object {
+    bool Boolean = false;
+    string String;
+    int Integer;
+    float Float;
+    double Double;
+    _object(bool v) : Boolean(v) {};
+    _object(int v) : Integer(v) {};
+    _object(string v) : String(v) {};
+
+} object;
+#endif
+#if 0
+typedef struct _object {
+    bool Boolean;
+    const char* String;
+    int Integer;
+    float Float;
+    double Double;
+} object;
+#endif
+#if 0
+template<T>
+class DataType {
+public:
+    DataType(T d) : data(d)
+    void set(T d) { data = d }
+    T get() { return data}
+private:
+    T data;
+};
+#endif
+
+class ArgumentMarshaler {
+public:
+    virtual void set(object d) = 0;
+    virtual object get() = 0;// { return object(); }
+    virtual ~ArgumentMarshaler() {};
+};
+
+class BoolArgumentMarshaler : public ArgumentMarshaler {
+public:
+    BoolArgumentMarshaler() : value(false) {}
+    void set(object v) { value.Boolean = v.Boolean; }
+    object get() { return value; }
+    ~BoolArgumentMarshaler() {}
+private:
+    object value;
+};
+#if 1
+class StringArgumentMarshaler : public ArgumentMarshaler {
+public:
+    StringArgumentMarshaler() :value(string()) {}
+    void set(object v) { value.String = v.String; }
+    object get() { return value; }
+    ~StringArgumentMarshaler() {}
+private:
+    object value;
+};
+#endif
 
 class Args {
 public:
@@ -51,7 +112,7 @@ public:
     void setStringArg(char argChar);
     bool isStringArg(char argChar);
 
-    void setBooleanArg(char argChar, bool value);
+    void setBooleanArg(char argChar, object value);
     bool isBooleanArg(char argChar);
 
     int cardinality();
@@ -74,8 +135,8 @@ private:
     vector<string> args;
     bool valid = true;
     set<char> unexpectedArguments = {};
-    map<char, bool> booleanArgs = {};
-    map<char, string> stringArgs = {};
+    map<char, ArgumentMarshaler*> booleanArgs = {};
+    map<char, ArgumentMarshaler*> stringArgs = {};
     map<char, int> intArgs = {};
     set<char> argsFound = {};
     int currentArgument;
