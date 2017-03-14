@@ -124,9 +124,7 @@ private:
     vector<string> args;
     bool valid = true;
     set<char> unexpectedArguments = {};
-    map<char, ArgumentMarshaler*> booleanArgs = {};
-    map<char, ArgumentMarshaler*> stringArgs = {};
-    map<char, ArgumentMarshaler*> intArgs = {};
+    map<char, ArgumentMarshaler*> marshaler = {};
     set<char> argsFound = {};
     int currentArgument;
     char errorArgumentId = '\0';

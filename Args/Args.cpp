@@ -63,13 +63,13 @@ void Args::validateSchemaElementId(char elementId) {
     }
 }
 void Args::parseBooleanSchemaElement(char elementId) {
-    booleanArgs[elementId] = new BoolArgumentMarshaler();
+    marshaler[elementId] = new BoolArgumentMarshaler();
 }
 void Args::parseIntegerSchemaElement(char elementId) {
-    intArgs[elementId] = new IntegerArgumentMarshaler();
+    marshaler[elementId] = new IntegerArgumentMarshaler();
 }
 void Args::parseStringSchemaElement(char elementId) {
-    stringArgs[elementId] = new StringArgumentMarshaler();
+    marshaler[elementId] = new StringArgumentMarshaler();
 }
 bool Args::isStringSchemaElement(string elementTail) {
     return elementTail == "*";
@@ -122,7 +122,8 @@ bool Args::setArgument(char argChar) {
 }
 
 bool Args::isIntArg(char argChar) {
-    return intArgs.find(argChar) != intArgs.end();
+    auto m = marshaler[argChar];
+    return dynamic_cast<IntegerArgumentMarshaler*>(m);
 }
 
 void Args::setIntArg(char argChar) {
@@ -130,7 +131,7 @@ void Args::setIntArg(char argChar) {
     string parameter = "";
     try {
         parameter = args.at(currentArgument);
-        intArgs[argChar]->set(std::stoi(parameter));
+        marshaler[argChar]->set(std::stoi(parameter));
     }
     catch (std::out_of_range e) {
         valid = false;
@@ -150,7 +151,7 @@ void Args::setIntArg(char argChar) {
 void Args::setStringArg(char argChar) {
     currentArgument++;
     try {
-        stringArgs[argChar] ->set(args.at(currentArgument));
+        marshaler[argChar] ->set(args.at(currentArgument));
     }
     catch (std::out_of_range e) {
         valid = false;
@@ -161,13 +162,15 @@ void Args::setStringArg(char argChar) {
 }
 
 bool Args::isStringArg(char argChar) {
-    return stringArgs.find(argChar) != stringArgs.end();
+    auto m = marshaler[argChar];
+    return dynamic_cast<StringArgumentMarshaler*>(m);
 }
 void Args::setBooleanArg(char argChar, object value) {
-    booleanArgs[argChar]->set(value);
+    marshaler[argChar]->set(value);
 }
 bool Args::isBooleanArg(char argChar) {
-    return booleanArgs.find(argChar) != booleanArgs.end();
+    auto m = marshaler[argChar];
+    return dynamic_cast<BoolArgumentMarshaler*>(m);
 }
 int Args::cardinality() {
     return argsFound.size();
@@ -199,21 +202,21 @@ string Args::unexpectedArgumentMessage() {
    return message + unexpected_chars + " unexpected.";
 }
 string Args::getString(char arg) {
-    auto am = stringArgs[arg];
+    auto am = marshaler[arg];
     if (am != nullptr)
         return am->get().String;
     else
         return false;
 }
 int Args::getInt(char arg) {
-    auto am = intArgs[arg];
+    auto am = marshaler[arg];
     if (am != nullptr)
         return am->get().Integer;
     else
         return 0;
 }
 bool Args::getBoolean(char arg) {
-    auto am = booleanArgs[arg];
+    auto am = marshaler[arg];
     if (am != nullptr)
         return am->get().Boolean;
     else
