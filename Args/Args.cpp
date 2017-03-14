@@ -66,7 +66,7 @@ void Args::parseBooleanSchemaElement(char elementId) {
     booleanArgs[elementId] = new BoolArgumentMarshaler();
 }
 void Args::parseIntegerSchemaElement(char elementId) {
-    intArgs[elementId] = 0;
+    intArgs[elementId] = new IntegerArgumentMarshaler();
 }
 void Args::parseStringSchemaElement(char elementId) {
     stringArgs[elementId] = new StringArgumentMarshaler();
@@ -130,7 +130,7 @@ void Args::setIntArg(char argChar) {
     string parameter = "";
     try {
         parameter = args.at(currentArgument);
-        intArgs[argChar] = std::stoi(parameter);
+        intArgs[argChar]->set(std::stoi(parameter));
     }
     catch (std::out_of_range e) {
         valid = false;
@@ -206,8 +206,11 @@ string Args::getString(char arg) {
         return false;
 }
 int Args::getInt(char arg) {
-    auto iter = intArgs.find(arg);
-    return iter == intArgs.end() ? 0 : iter->second;
+    auto am = intArgs[arg];
+    if (am != nullptr)
+        return am->get().Integer;
+    else
+        return 0;
 }
 bool Args::getBoolean(char arg) {
     auto am = booleanArgs[arg];

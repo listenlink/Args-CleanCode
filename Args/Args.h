@@ -32,31 +32,11 @@ typedef struct _object {
 
 } object;
 #endif
-#if 0
-typedef struct _object {
-    bool Boolean;
-    const char* String;
-    int Integer;
-    float Float;
-    double Double;
-} object;
-#endif
-#if 0
-template<T>
-class DataType {
-public:
-    DataType(T d) : data(d)
-    void set(T d) { data = d }
-    T get() { return data}
-private:
-    T data;
-};
-#endif
 
 class ArgumentMarshaler {
 public:
     virtual void set(object d) = 0;
-    virtual object get() = 0;// { return object(); }
+    virtual object get() = 0;
     virtual ~ArgumentMarshaler() {};
 };
 
@@ -69,7 +49,7 @@ public:
 private:
     object value;
 };
-#if 1
+
 class StringArgumentMarshaler : public ArgumentMarshaler {
 public:
     StringArgumentMarshaler() :value(string()) {}
@@ -79,7 +59,16 @@ public:
 private:
     object value;
 };
-#endif
+
+class IntegerArgumentMarshaler : public ArgumentMarshaler {
+public:
+    IntegerArgumentMarshaler() :value(0) {}
+    void set(object v) { value.Integer = v.Integer; }
+    object get() { return value; }
+    ~IntegerArgumentMarshaler() {}
+private:
+    object value;
+};
 
 class Args {
 public:
@@ -137,7 +126,7 @@ private:
     set<char> unexpectedArguments = {};
     map<char, ArgumentMarshaler*> booleanArgs = {};
     map<char, ArgumentMarshaler*> stringArgs = {};
-    map<char, int> intArgs = {};
+    map<char, ArgumentMarshaler*> intArgs = {};
     set<char> argsFound = {};
     int currentArgument;
     char errorArgumentId = '\0';
