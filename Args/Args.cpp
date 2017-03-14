@@ -111,15 +111,22 @@ void Args::parseElement(char argChar) {
 
 bool Args::setArgument(char argChar) {
     auto m = marshaler[argChar];
-    if (isBooleanArg(m))
-        setBooleanArg(argChar);
-    else if (isStringArg(m))
-        setStringArg(argChar);
-    else if (isIntArg(m))
-        setIntArg(argChar);
-    else
-        return false;
-    return true;
+    try {
+        if (isBooleanArg(m))
+            setBooleanArg(argChar);
+        else if (isStringArg(m))
+            setStringArg(argChar);
+        else if (isIntArg(m))
+            setIntArg(argChar);
+        else
+            return false;
+    }
+    catch (ArgsException e) {
+        valid = false;
+        errorArgumentId = argChar;
+        throw e;
+    }
+
 }
 
 bool Args::isIntArg(ArgumentMarshaler* m) {
@@ -202,24 +209,30 @@ string Args::unexpectedArgumentMessage() {
 }
 string Args::getString(char arg) {
     auto am = marshaler[arg];
-    if (am != nullptr)
-        return am->get().String;
-    else
-        return false;
+    try {
+        return am == nullptr ? "" : am->get().String;
+    }
+    catch (exception e) {
+        return "";
+    }
 }
 int Args::getInt(char arg) {
     auto am = marshaler[arg];
-    if (am != nullptr)
-        return am->get().Integer;
-    else
+    try {
+        return am == nullptr? 0 : am->get().Integer;
+    }
+    catch (exception e) {
         return 0;
+    }
 }
 bool Args::getBoolean(char arg) {
     auto am = marshaler[arg];
-    if (am != nullptr)
-        return am->get().Boolean;
-    else
+    try {
+        return am == nullptr ? false : am->get().Boolean;
+    }
+    catch (exception e) {
         return false;
+    }
 }
 bool Args::has(char arg) {
     return argsFound.find(arg) != argsFound.end();
