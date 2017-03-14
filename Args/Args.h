@@ -4,6 +4,11 @@
 #include <set>
 #include <map>
 using namespace std;
+
+enum ErrorCode {
+    OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER, UNEXPECTED_ARGUMENT
+};
+
 class ParseException {
 public:
     ParseException(const string& exception_msg):msg(exception_msg){}
@@ -35,7 +40,7 @@ typedef struct _object {
 
 class ArgumentMarshaler {
 public:
-    virtual void set(object d) = 0;
+    virtual void set(string d) = 0;
     virtual object get() = 0;
     virtual ~ArgumentMarshaler() {};
 };
@@ -43,7 +48,7 @@ public:
 class BoolArgumentMarshaler : public ArgumentMarshaler {
 public:
     BoolArgumentMarshaler() : value(false) {}
-    void set(object v) { value.Boolean = v.Boolean; }
+    void set(string v) { value.Boolean = true;}//TODO
     object get() { return value; }
     ~BoolArgumentMarshaler() {}
 private:
@@ -53,21 +58,29 @@ private:
 class StringArgumentMarshaler : public ArgumentMarshaler {
 public:
     StringArgumentMarshaler() :value(string()) {}
-    void set(object v) { value.String = v.String; }
+    void set(string v) { 
+        value.String = v;
+    }
     object get() { return value; }
     ~StringArgumentMarshaler() {}
 private:
     object value;
+    bool valid;
+    ErrorCode errorCode;
 };
 
 class IntegerArgumentMarshaler : public ArgumentMarshaler {
 public:
     IntegerArgumentMarshaler() :value(0) {}
-    void set(object v) { value.Integer = v.Integer; }
+    void set(string v) {
+            value.Integer = std::stoi(v);
+    }
     object get() { return value; }
     ~IntegerArgumentMarshaler() {}
 private:
     object value;
+    bool valid;
+    ErrorCode errorCode;
 };
 
 class Args {
@@ -95,13 +108,6 @@ public:
 
     bool setArgument(char argChar);
 
-    void setIntArg(ArgumentMarshaler* m);
-
-    void setStringArg(ArgumentMarshaler* m);
-
-    void setBooleanArg(ArgumentMarshaler* m);
-
-
     int cardinality();
     string usage();
     string errorMessage();
@@ -114,9 +120,6 @@ public:
     bool isValid();
 
 private:
-    enum ErrorCode {
-        OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER, UNEXPECTED_ARGUMENT
-    };
 
     string schema;
     vector<string> args;

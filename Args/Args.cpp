@@ -114,58 +114,34 @@ bool Args::setArgument(char argChar) {
     if (m == nullptr)
         return false;
     try {
-        if (bool(dynamic_cast<BoolArgumentMarshaler*>(m)))
-            setBooleanArg(m);
-        else if (bool(dynamic_cast<StringArgumentMarshaler*>(m)))
-            setStringArg(m);
-        else if (bool(dynamic_cast<IntegerArgumentMarshaler*>(m)))
-            setIntArg(m);
+        if (dynamic_cast<BoolArgumentMarshaler*>(m))
+            m->set("true");
+        else {
+            currentArgument++;
+            m->set(args.at(currentArgument));
+        }
     }
     catch (ArgsException e) {
         valid = false;
         errorArgumentId = argChar;
         throw e;
     }
-
-}
-
-void Args::setIntArg(ArgumentMarshaler* m) {
-    currentArgument++;
-    string parameter = "";
-    try {
-        parameter = args.at(currentArgument);
-        m->set(std::stoi(parameter));
-    }
     catch (std::out_of_range e) {
         valid = false;
-        // errorArgumentId = argChar;
-        errorCode = ErrorCode::MISSING_INTEGER;
+        errorArgumentId = argChar;
+        if(dynamic_cast<StringArgumentMarshaler*>(m))
+            errorCode = ErrorCode::MISSING_STRING;
+        else 
+            errorCode = ErrorCode::MISSING_INTEGER;
         throw ArgsException("");
-    }
+    } 
     catch (std::invalid_argument e) {
         valid = false;
-        // errorArgumentId = argChar;
-        errorParameter = parameter;
+        errorArgumentId = argChar;
+        errorParameter = args.at(currentArgument);
         errorCode = ErrorCode::INVALID_INTEGER;
         throw ArgsException("");
     }
-}
-
-void Args::setStringArg(ArgumentMarshaler* m) {
-    currentArgument++;
-    try {
-        m->set(args.at(currentArgument));
-    }
-    catch (std::out_of_range e) {
-        valid = false;
-        // errorArgumentId = argChar;
-        errorCode = ErrorCode::MISSING_STRING;
-        throw ArgsException("");
-    }
-}
-
-void Args::setBooleanArg(ArgumentMarshaler* m) {
-    m->set(true);
 }
 
 int Args::cardinality() {
