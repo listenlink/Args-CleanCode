@@ -3,27 +3,13 @@
 #include <vector>
 #include <set>
 #include <map>
+#include "args_exception.h"
 using namespace std;
 
 enum ErrorCode {
     OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER, UNEXPECTED_ARGUMENT
 };
 
-class ParseException {
-public:
-    ParseException(const string& exception_msg):msg(exception_msg){}
-    const string& message() { return msg; };
-private:
-    string msg;
-};
-
-class ArgsException {
-public:
-    ArgsException(const string& exception_msg) :msg(exception_msg) {}
-    const string& message() { return msg; };
-private:
-    string msg;
-};
 #if 1
 typedef struct _object {
     bool Boolean = false;

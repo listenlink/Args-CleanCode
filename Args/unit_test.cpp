@@ -89,16 +89,16 @@ TEST(test_misc, no_arg)
     Args arg(schema, args);
     EXPECT_EQ(0, arg.cardinality());
 }
-TEST(test_ParseException, invalid_argument_format)
+TEST(test_ArgsException, invalid_argument_format)
 {
     string schema("dd");
-    ASSERT_THROW(Args(schema, {}), ParseException);
+    ASSERT_THROW(Args(schema, {}), ArgsException);
 }
 
-TEST(test_ParseExceptionTest, bad_argument_character)
+TEST(test_ArgsExceptionTest, bad_argument_character)
 {
     string schema("@");
-    ASSERT_THROW(Args(schema, {}), ParseException);
+    ASSERT_THROW(Args(schema, {}), ArgsException);
 }
 
 TEST(test_invalid_arguments, UNEXPECTED_ARGUMENT)

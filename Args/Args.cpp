@@ -49,13 +49,13 @@ void Args::parseSchemaElement(string element) {
         parseIntegerSchemaElement(elementId);
     }
     else {
-        throw ParseException(fmt::sprintf("Argument: %c has invalid format : %s.", elementId, elementTail));
+        throw ArgsException(fmt::sprintf("Argument: %c has invalid format : %s.", elementId, elementTail));
     }
 }
 
 void Args::validateSchemaElementId(char elementId) {
     if (!isalpha(elementId)){
-        throw ParseException(fmt::sprintf("Bad character: %c",elementId) 
+        throw ArgsException(fmt::sprintf("Bad character: %c",elementId) 
             + "in Args format: " + schema);
     }
 }
