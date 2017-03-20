@@ -109,7 +109,8 @@ TEST(test_invalid_arguments, UNEXPECTED_ARGUMENT)
         Args arg(schema, args);
     }
     catch (const ArgsException& e) {
-        EXPECT_EQ("Argument(s) : l unexpected.", e.message());
+
+        ASSERT_STREQ("Argument(s) : l unexpected.", e.what());
     }
 }
 
@@ -121,7 +122,7 @@ TEST(test_invalid_arguments, MISSING_STRING)
         Args arg(schema, args);
     }
     catch (const ArgsException& e) {
-        EXPECT_EQ("Could not find string parameter for : d", e.message());
+        ASSERT_STREQ("Could not find string parameter for : d", e.what());
     }
 }
 
@@ -133,7 +134,7 @@ TEST(test_invalid_arguments, INVALID_INTEGER)
         Args arg(schema, args);
     }
     catch (const ArgsException& e) {
-        EXPECT_EQ("Argument -p expects an integer but was 'not a number'", e.message());
+        ASSERT_STREQ("Argument -p expects an integer but was 'not a number'", e.what());
     }
 }
 
@@ -145,6 +146,6 @@ TEST(test_invalid_arguments, MISSING_INTEGER)
         Args arg(schema, args);
     }
     catch (const ArgsException& e) {
-        EXPECT_EQ("Could not find integer parameter for : p", e.message());
+        ASSERT_STREQ("Could not find integer parameter for : p", e.what());
     }
 }

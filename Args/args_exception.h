@@ -1,8 +1,10 @@
 #pragma once
+#include <exception>
 #include <string>
 #include "fmt\fmt_all.h"
 using namespace std;
-class ArgsException {
+
+class ArgsException: public exception {
 public:
     enum ErrorCode {
         OK, 
@@ -17,7 +19,10 @@ public:
         errorCode(error_code), errorArgumentId(errorId), errorParameter(params) {
         setMessage();
     }
-    string message() const { return exceptionMsg; }
+
+    virtual const char* what() const throw() {
+        return exceptionMsg.c_str();
+    }
 private:
     void setMessage() {
             switch (errorCode) {
