@@ -105,30 +105,46 @@ TEST(test_invalid_arguments, UNEXPECTED_ARGUMENT)
 {
     string schema("d*");
     vector<string> args{ "-d", "good","-l","-k" };
-    Args arg(schema, args);
-    EXPECT_EQ("Argument(s) : kl unexpected.", arg.errorMessage());
+    try {
+        Args arg(schema, args);
+    }
+    catch (const ArgsException& e) {
+        EXPECT_EQ("Argument(s) : l unexpected.", e.message());
+    }
 }
 
 TEST(test_invalid_arguments, MISSING_STRING)
 {
     string schema("d*");
-    vector<string> args{ "-d"};
-    Args arg(schema, args);
-    EXPECT_EQ("Could not find string parameter for : d", arg.errorMessage());
+    vector<string> args{ "-d" };
+    try {
+        Args arg(schema, args);
+    }
+    catch (const ArgsException& e) {
+        EXPECT_EQ("Could not find string parameter for : d", e.message());
+    }
 }
 
 TEST(test_invalid_arguments, INVALID_INTEGER)
 {
     string schema("p#");
     vector<string> args{ "-p","not a number" };
-    Args arg(schema, args);
-    EXPECT_EQ("Argument -p expects an integer but was 'not a number'", arg.errorMessage());
+    try {
+        Args arg(schema, args);
+    }
+    catch (const ArgsException& e) {
+        EXPECT_EQ("Argument -p expects an integer but was 'not a number'", e.message());
+    }
 }
 
 TEST(test_invalid_arguments, MISSING_INTEGER)
 {
     string schema("p#");
     vector<string> args{ "-p",};
-    Args arg(schema, args);
-    EXPECT_EQ("Could not find integer parameter for : p", arg.errorMessage());
+    try {
+        Args arg(schema, args);
+    }
+    catch (const ArgsException& e) {
+        EXPECT_EQ("Could not find integer parameter for : p", e.message());
+    }
 }

@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "fmt\fmt_all.h"
 #include "Args.h"
 
 Args::Args(string schema, vector<string> args): schema(schema), args(args) {
@@ -13,12 +12,8 @@ Args::~Args(){}
 
 void Args::parse() {
     parseSchema();
-    try {
-        parseArguments();
-    }
-    catch (ArgsException e) {
-        e;
-    }
+    parseArguments();
+
 }
 
 void Args::parseSchema() {
@@ -37,27 +32,26 @@ void Args::parseSchema() {
     } while (find_pos != std::string::npos);
     return;
 }
+
 void Args::parseSchemaElement(string element) {
     char elementId = element[0];
     string elementTail = element.substr(1);
-    validateSchemaElementId(elementId);
-    if (isBooleanSchemaElement(elementTail))
-        parseBooleanSchemaElement(elementId);
-    else if (isStringSchemaElement(elementTail))
-        parseStringSchemaElement(elementId);
-    else if (isIntegerSchemaElement(elementTail)) {
-        parseIntegerSchemaElement(elementId);
+    if (validateSchemaElementId(elementId)) {
+        if (isBooleanSchemaElement(elementTail))
+            parseBooleanSchemaElement(elementId);
+        else if (isStringSchemaElement(elementTail))
+            parseStringSchemaElement(elementId);
+        else if (isIntegerSchemaElement(elementTail))
+            parseIntegerSchemaElement(elementId);
+        else
+            throw ArgsException(ErrorCode::INVALID_FORMAT, elementId);
     }
-    else {
-        throw ArgsException(fmt::sprintf("Argument: %c has invalid format : %s.", elementId, elementTail));
-    }
+    else
+        throw ArgsException(ErrorCode::INVALID_FORMAT, elementId);
 }
 
-void Args::validateSchemaElementId(char elementId) {
-    if (!isalpha(elementId)){
-        throw ArgsException(fmt::sprintf("Bad character: %c",elementId) 
-            + "in Args format: " + schema);
-    }
+bool Args::validateSchemaElementId(char elementId) {
+    return isalpha(elementId);
 }
 void Args::parseBooleanSchemaElement(char elementId) {
     marshaler[elementId] = new BoolArgumentMarshaler();
@@ -102,8 +96,7 @@ void Args::parseElement(char argChar) {
     if (setArgument(argChar))
         argsFound.insert(argChar);
     else {
-        unexpectedArguments.insert(argChar);
-        errorCode = ErrorCode::UNEXPECTED_ARGUMENT;
+        throw ArgsException(ErrorCode::UNEXPECTED_ARGUMENT, argChar);
     }
 }
 
@@ -119,23 +112,15 @@ bool Args::setArgument(char argChar) {
             m->set(args.at(currentArgument));
         }
     }
-    catch (ArgsException e) {
-        errorArgumentId = argChar;
-        throw e;
-    }
     catch (std::out_of_range e) {
-        errorArgumentId = argChar;
         if(dynamic_cast<StringArgumentMarshaler*>(m))
-            errorCode = ErrorCode::MISSING_STRING;
-        else 
-            errorCode = ErrorCode::MISSING_INTEGER;
-        throw ArgsException("");
+            throw ArgsException(ErrorCode::MISSING_STRING, argChar);
+        else
+            throw ArgsException(ErrorCode::MISSING_INTEGER, argChar);
     } 
     catch (std::invalid_argument e) {
-        errorArgumentId = argChar;
-        errorParameter = args.at(currentArgument);
-        errorCode = ErrorCode::INVALID_INTEGER;
-        throw ArgsException("");
+        throw ArgsException(ErrorCode::INVALID_INTEGER, argChar, args.at(currentArgument));
+
     }
 }
 
@@ -148,26 +133,7 @@ string Args::usage() {
     else
         return "";
 }
-string Args::errorMessage() {
-    switch (errorCode) {
-    case OK:
-        throw string("TILT: Should not get here.");
-    case UNEXPECTED_ARGUMENT:
-        return unexpectedArgumentMessage();
-    case MISSING_STRING:
-        return string(fmt::sprintf("Could not find string parameter for : %c", errorArgumentId));
-    case INVALID_INTEGER:
-        return string(fmt::sprintf("Argument -%c expects an integer but was '%s'", errorArgumentId, errorParameter));
-    case MISSING_INTEGER:
-        return string(fmt::sprintf("Could not find integer parameter for : %c", errorArgumentId));
-    }
-    return "";
-}
-string Args::unexpectedArgumentMessage() {
-   string message = "Argument(s) : ";
-   string unexpected_chars(unexpectedArguments.begin(), unexpectedArguments.end());
-   return message + unexpected_chars + " unexpected.";
-}
+
 string Args::getString(char arg) {
     auto am = marshaler[arg];
     try {

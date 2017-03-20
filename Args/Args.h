@@ -6,10 +6,6 @@
 #include "args_exception.h"
 using namespace std;
 
-enum ErrorCode {
-    OK, MISSING_STRING, MISSING_INTEGER, INVALID_INTEGER, UNEXPECTED_ARGUMENT
-};
-
 #if 1
 typedef struct _object {
     bool Boolean = false;
@@ -67,13 +63,14 @@ private:
 
 class Args {
 public:
+    using ErrorCode = ArgsException::ErrorCode;
     Args(string schema, vector<string> args);
     ~Args();
 
     void parse();
     void parseSchema();
     void parseSchemaElement(string element);
-    void validateSchemaElementId(char elementId);
+    bool validateSchemaElementId(char elementId);
     
     void parseBooleanSchemaElement(char elementId);
     void parseIntegerSchemaElement(char elementId);
@@ -92,7 +89,6 @@ public:
 
     int cardinality();
     string usage();
-    string errorMessage();
     string unexpectedArgumentMessage();
 
     string getString(char arg);
@@ -104,11 +100,7 @@ private:
 
     string schema;
     vector<string> args;
-    set<char> unexpectedArguments = {};
     map<char, ArgumentMarshaler*> marshaler = {};
     set<char> argsFound = {};
     int currentArgument;
-    char errorArgumentId = '\0';
-    string errorParameter = "TILT";
-    ErrorCode errorCode = ErrorCode::OK;
 };
