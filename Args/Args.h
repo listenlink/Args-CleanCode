@@ -85,7 +85,7 @@ public:
     ~Args();
 
     void parse();
-    bool parseSchema();
+    void parseSchema();
     void parseSchemaElement(string element);
     void validateSchemaElementId(char elementId);
     
@@ -97,7 +97,7 @@ public:
     bool isBooleanSchemaElement(string elementTail);
     bool isIntegerSchemaElement(string elementTail);
 
-    bool parseArguments();
+    void parseArguments();
     void parseArgument(string arg);
     void parseElements(string arg);
     void parseElement(char argChar);

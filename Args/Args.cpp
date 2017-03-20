@@ -5,18 +5,13 @@
 #include "fmt\fmt_all.h"
 #include "Args.h"
 
-Args::Args(string schema, vector<string> args) {
-    this->schema = schema;
-    this->args = args;
+Args::Args(string schema, vector<string> args): schema(schema), args(args) {
     parse();
 }
 
 Args::~Args(){}
 
 void Args::parse() {
-    if (schema.length() == 0 && args.size() == 0) {
-        return;
-    }
     parseSchema();
     try {
         parseArguments();
@@ -26,7 +21,10 @@ void Args::parse() {
     }
 }
 
-bool Args::parseSchema() {
+void Args::parseSchema() {
+    if (schema.length() == 0)
+        return;
+
     std::string::size_type start_pos, find_pos;
     start_pos = find_pos = 0;
     do {
@@ -37,7 +35,7 @@ bool Args::parseSchema() {
         start_pos = find_pos + 1;
         parseSchemaElement(schema.substr(begin, end - begin + 1));
     } while (find_pos != std::string::npos);
-    return true;
+    return;
 }
 void Args::parseSchemaElement(string element) {
     char elementId = element[0];
@@ -80,13 +78,15 @@ bool Args::isIntegerSchemaElement(string elementTail) {
     return elementTail == "#";
 }
 
-bool Args::parseArguments() {
+void Args::parseArguments() {
+    if (args.size() == 0)
+        return;
     for (currentArgument = 0; static_cast<size_t>(currentArgument) < args.size(); currentArgument++)
     {
         string arg = args[currentArgument];
         parseArgument(arg);
     }
-    return true;
+    return;
 }
 void Args::parseArgument(string arg) {
     if (!arg.empty() && arg.front() == '-') {
