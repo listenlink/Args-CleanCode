@@ -154,6 +154,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="args.h" />
+    <ClInclude Include="args_exception.h" />
+    <ClInclude Include="argument_marshaler.h" />
     <ClInclude Include="fmt\fmt_all.h" />
     <ClInclude Include="fmt\format.h" />
     <ClInclude Include="fmt\ostream.h" />

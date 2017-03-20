@@ -89,7 +89,6 @@ public:
 
     int cardinality();
     string usage();
-    string unexpectedArgumentMessage();
 
     string getString(char arg);
     int getInt(char arg);

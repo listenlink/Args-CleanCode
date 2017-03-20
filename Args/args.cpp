@@ -13,7 +13,6 @@ Args::~Args(){}
 void Args::parse() {
     parseSchema();
     parseArguments();
-
 }
 
 void Args::parseSchema() {
