@@ -34,6 +34,11 @@ public:
     bool has(char arg);
 
 private:
+    template<typename T>
+    unique_ptr<ArgumentMarshaler> createMarshaler() {
+      return make_unique<T>();
+    }
+
     bool validateSchemaElementId(char elementId);
 
     bool isStringSchemaElement(string elementTail);

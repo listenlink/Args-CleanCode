@@ -5,6 +5,7 @@
 
 Args::Args(string schema, vector<string> args):
   schema(schema), args(args) {
+
     parse();
 }
 
