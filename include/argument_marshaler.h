@@ -23,7 +23,7 @@ public:
 class BoolArgumentMarshaler : public ArgumentMarshaler {
 public:
     BoolArgumentMarshaler() : value(false) {}
-    void set(std::string v) { value.Boolean = true; }//TODO
+    void set(std::string) { value.Boolean = true; }//TODO
     object get() { return value; }
     ~BoolArgumentMarshaler() {}
 private:

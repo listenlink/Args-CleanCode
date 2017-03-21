@@ -48,8 +48,10 @@ private:
                 exceptionMsg = "";
         }
     }
+private:
+    ErrorCode errorCode;
     char errorArgumentId;
     string exceptionMsg;
     string errorParameter;
-    ErrorCode errorCode;
+
 };

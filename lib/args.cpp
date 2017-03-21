@@ -120,6 +120,7 @@ bool Args::setArgument(char argChar) {
         throw ArgsException(ErrorCode::INVALID_INTEGER, argChar, args.at(currentArgument));
 
     }
+    return true;
 }
 
 int Args::cardinality() {
