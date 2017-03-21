@@ -10,22 +10,14 @@ endif()
 # Add visibility of headers
 file(GLOB_RECURSE MAKE_HEADERS_VISIBLE_SRC *.cpp *.c *.hpp *.h)
 add_custom_target(MAKE_HEADERS_VISIBLE SOURCES ${MAKE_HEADERS_VISIBLE_SRC})
-
 #Compiler flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Wextra -pedantic")
 
-file(GLOB ARGS_SRC src/*.cpp)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/external/)
 
-#set(ExternalProjectCMakeArgs
-#    -DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/external
-#    -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
-#    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-#    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-#    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-#    )
+file(GLOB ARGS_SRC lib/*.cpp)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/fmt)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/googletest)
 
-
-
-add_subdirectory(src)
+add_subdirectory(lib)
+add_subdirectory(test)
