@@ -5,6 +5,7 @@
 #include <map>
 #include "args_exception.h"
 #include "argument_marshaler.h"
+
 using namespace std;
 
 class Args {
@@ -16,15 +17,6 @@ public:
     void parse();
     void parseSchema();
     void parseSchemaElement(string element);
-    bool validateSchemaElementId(char elementId);
-    
-    void parseBooleanSchemaElement(char elementId);
-    void parseIntegerSchemaElement(char elementId);
-    void parseStringSchemaElement(char elementId);
-
-    bool isStringSchemaElement(string elementTail);
-    bool isBooleanSchemaElement(string elementTail);
-    bool isIntegerSchemaElement(string elementTail);
 
     void parseArguments();
     void parseArgument(string arg);
@@ -41,6 +33,12 @@ public:
     bool getBoolean(char arg);
     bool has(char arg);
 
+private:
+    bool validateSchemaElementId(char elementId);
+
+    bool isStringSchemaElement(string elementTail);
+    bool isBooleanSchemaElement(string elementTail);
+    bool isIntegerSchemaElement(string elementTail);
 private:
 
     string schema;

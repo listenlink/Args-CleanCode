@@ -3,7 +3,8 @@
 
 #include "args.h"
 
-Args::Args(string schema, vector<string> args): schema(schema), args(args) {
+Args::Args(string schema, vector<string> args):
+  schema(schema), args(args) {
     parse();
 }
 
@@ -36,11 +37,11 @@ void Args::parseSchemaElement(string element) {
     string elementTail = element.substr(1);
     if (validateSchemaElementId(elementId)) {
         if (isBooleanSchemaElement(elementTail))
-            parseBooleanSchemaElement(elementId);
+            marshaler[elementId] = make_unique<BoolArgumentMarshaler>();
         else if (isStringSchemaElement(elementTail))
-            parseStringSchemaElement(elementId);
+            marshaler[elementId] = make_unique<StringArgumentMarshaler>();
         else if (isIntegerSchemaElement(elementTail))
-            parseIntegerSchemaElement(elementId);
+            marshaler[elementId] = make_unique<IntegerArgumentMarshaler>();
         else
             throw ArgsException(ErrorCode::INVALID_FORMAT, elementId);
     }
@@ -51,15 +52,7 @@ void Args::parseSchemaElement(string element) {
 bool Args::validateSchemaElementId(char elementId) {
     return isalpha(elementId);
 }
-void Args::parseBooleanSchemaElement(char elementId) {
-    marshaler[elementId] = make_unique<BoolArgumentMarshaler>();
-}
-void Args::parseIntegerSchemaElement(char elementId) {
-    marshaler[elementId] = make_unique<IntegerArgumentMarshaler>();
-}
-void Args::parseStringSchemaElement(char elementId) {
-    marshaler[elementId] = make_unique<StringArgumentMarshaler>();
-}
+
 bool Args::isStringSchemaElement(string elementTail) {
     return elementTail == "*";
 }
@@ -80,22 +73,22 @@ void Args::parseArguments() {
     }
     return;
 }
+
 void Args::parseArgument(string arg) {
-    if (!arg.empty() && arg.front() == '-') {
+    if (!arg.empty() && arg.front() == '-')
         parseElements(arg);
-    }
 }
+
 void Args::parseElements(string arg) {
-        for (std::size_t i = 1; i < arg.length(); i++)
-            parseElement(arg[i]);
-    }
+    for (std::size_t i = 1; i < arg.length(); i++)
+        parseElement(arg[i]);
+}
 
 void Args::parseElement(char argChar) {
     if (setArgument(argChar))
         argsFound.insert(argChar);
-    else {
+    else
         throw ArgsException(ErrorCode::UNEXPECTED_ARGUMENT, argChar);
-    }
 }
 
 bool Args::setArgument(char argChar) {
