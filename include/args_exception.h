@@ -68,8 +68,10 @@ private:
                 break;
             case ErrorCode::INVALID_DOUBLE:
                 exceptionMsg = string(fmt::sprintf("Argument -%c expects a double but was '%s'", errorArgumentId, errorParameter));
+                break;
             case ErrorCode::MISSING_DOUBLE:
                 exceptionMsg = string(fmt::sprintf("Could not find double parameter for : %c", errorArgumentId));
+                break;
             default:
                 exceptionMsg = "";
         }
