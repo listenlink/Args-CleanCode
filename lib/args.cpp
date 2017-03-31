@@ -42,6 +42,8 @@ void Args::parseSchemaElement(const string& element) {
         marshaler[elementId] = make_unique<StringArgumentMarshaler>();
     else if (isIntegerSchemaElement(elementTail))
         marshaler[elementId] = make_unique<IntegerArgumentMarshaler>();
+    else if (isDoubleSchemaElement(elementTail))
+        marshaler[elementId] = std::make_unique<DoubleArgumentMarshaler>();
     else
         throw ArgsException(ErrorCode::INVALID_FORMAT, elementId);
 }
@@ -54,11 +56,17 @@ void Args::validateSchemaElementId(char elementId) {
 bool Args::isStringSchemaElement(const string& elementTail) {
     return elementTail == "*";
 }
+
 bool Args::isBooleanSchemaElement(const string& elementTail) {
     return elementTail.length() == 0;
 }
+
 bool Args::isIntegerSchemaElement(const string& elementTail) {
     return elementTail == "#";
+}
+
+bool Args::isDoubleSchemaElement(const string& elementTail) {
+    return elementTail == "##";
 }
 
 void Args::parseArguments() {
@@ -122,6 +130,7 @@ int Args::getInt(char arg) {
         return 0;
     }
 }
+
 bool Args::getBoolean(char arg) {
     auto am = marshaler[arg].get();
     try {
@@ -129,6 +138,16 @@ bool Args::getBoolean(char arg) {
     }
     catch (exception e) {
         return false;
+    }
+}
+
+double Args::getDouble(char arg) {
+    auto am = marshaler[arg].get();
+    try {
+        return am == nullptr ? 0 : am->get().Double;
+    }
+    catch (exception e) {
+        return 0.;
     }
 }
 bool Args::has(char arg) {

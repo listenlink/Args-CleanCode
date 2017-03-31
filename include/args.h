@@ -23,12 +23,14 @@ public:
     void parseElements(const string& arg);
     void parseElement(char argChar);
 
+
     int cardinality();
     string usage();
 
     string getString(char arg);
     int getInt(char arg);
     bool getBoolean(char arg);
+    double getDouble(char arg);
     bool has(char arg);
 
 private:
@@ -38,6 +40,7 @@ private:
     bool isStringSchemaElement(const string& elementTail);
     bool isBooleanSchemaElement(const string& elementTail);
     bool isIntegerSchemaElement(const string& elementTail);
+    bool isDoubleSchemaElement(const string& elementTail);
 private:
 
     string schema;

@@ -10,7 +10,9 @@ public:
         OK, 
         MISSING_STRING, 
         MISSING_INTEGER, 
-        INVALID_INTEGER, 
+        MISSING_DOUBLE,
+        INVALID_INTEGER,
+        INVALID_DOUBLE,
         UNEXPECTED_ARGUMENT,
         INVALID_ARGUMEMNT_NAME,
         INVALID_FORMAT

@@ -5,12 +5,11 @@ typedef struct _object {
     bool Boolean = false;
     std::string String;
     int Integer;
-    float Float;
     double Double;
     _object(bool v) : Boolean(v) {};
     _object(int v) : Integer(v) {};
-    _object(std::string v) : String(v) {};
-
+    _object(const std::string& v) : String(v) {};
+    _object(double v) : Double(v) {};
 } object;
 
 using ArgumentStringsType = std::vector<std::string>;
@@ -78,6 +77,32 @@ public:
     }
     object get() { return value; }
     ~IntegerArgumentMarshaler() {}
+private:
+    object value;
+};
+
+class DoubleArgumentMarshaler : public ArgumentMarshaler {
+public:
+    DoubleArgumentMarshaler() :value(0) {}
+    ArgumentStringIterator set(const ArgumentStringIterator& begin, const ArgumentStringIterator& end) {
+        auto DoubleIt = begin + 1;
+        if (DoubleIt >= end) {
+            throw ArgsException(ArgsException::ErrorCode::MISSING_DOUBLE);
+        }
+
+        try {
+            value.Double = std::stod(*DoubleIt);
+        }
+        catch (std::invalid_argument) {
+            auto e = ArgsException(ArgsException::ErrorCode::INVALID_DOUBLE);
+            e.setErrorParameter(*DoubleIt);
+            throw e;
+        }
+
+        return DoubleIt;
+    }
+    object get() { return value; }
+    ~DoubleArgumentMarshaler() {}
 private:
     object value;
 };
