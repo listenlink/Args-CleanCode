@@ -11,16 +11,16 @@ using namespace std;
 class Args {
 public:
     using ErrorCode = ArgsException::ErrorCode;
-    Args(string schema, vector<string> args);
+    Args(const string& schema, vector<string> args);
     ~Args();
 
     void parse();
     void parseSchema();
-    void parseSchemaElement(string element);
+    void parseSchemaElement(const string& element);
 
     void parseArguments();
-    void parseArgument(string arg);
-    void parseElements(string arg);
+    void parseArgument(const string& arg);
+    void parseElements(const string& arg);
     void parseElement(char argChar);
 
     bool setArgument(char argChar);
@@ -34,16 +34,12 @@ public:
     bool has(char arg);
 
 private:
-    template<typename T>
-    unique_ptr<ArgumentMarshaler> createMarshaler() {
-      return make_unique<T>();
-    }
 
-    bool validateSchemaElementId(char elementId);
+    void validateSchemaElementId(char elementId);
 
-    bool isStringSchemaElement(string elementTail);
-    bool isBooleanSchemaElement(string elementTail);
-    bool isIntegerSchemaElement(string elementTail);
+    bool isStringSchemaElement(const string& elementTail);
+    bool isBooleanSchemaElement(const string& elementTail);
+    bool isIntegerSchemaElement(const string& elementTail);
 private:
 
     string schema;

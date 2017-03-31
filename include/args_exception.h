@@ -12,6 +12,7 @@ public:
         MISSING_INTEGER, 
         INVALID_INTEGER, 
         UNEXPECTED_ARGUMENT,
+        INVALID_ARGUMEMNT_NAME,
         INVALID_FORMAT
     };
 

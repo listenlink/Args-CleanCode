@@ -3,9 +3,8 @@
 
 #include "args.h"
 
-Args::Args(string schema, vector<string> args):
+Args::Args(const string& schema, vector<string> args):
   schema(schema), args(args) {
-
     parse();
 }
 
@@ -33,54 +32,50 @@ void Args::parseSchema() {
     return;
 }
 
-void Args::parseSchemaElement(string element) {
+void Args::parseSchemaElement(const string& element) {
     char elementId = element[0];
     string elementTail = element.substr(1);
-    if (validateSchemaElementId(elementId)) {
-        if (isBooleanSchemaElement(elementTail))
-            marshaler[elementId] = make_unique<BoolArgumentMarshaler>();
-        else if (isStringSchemaElement(elementTail))
-            marshaler[elementId] = make_unique<StringArgumentMarshaler>();
-        else if (isIntegerSchemaElement(elementTail))
-            marshaler[elementId] = make_unique<IntegerArgumentMarshaler>();
-        else
-            throw ArgsException(ErrorCode::INVALID_FORMAT, elementId);
-    }
+    validateSchemaElementId(elementId);
+
+    if (isBooleanSchemaElement(elementTail))
+        marshaler[elementId] = make_unique<BoolArgumentMarshaler>();
+    else if (isStringSchemaElement(elementTail))
+        marshaler[elementId] = make_unique<StringArgumentMarshaler>();
+    else if (isIntegerSchemaElement(elementTail))
+        marshaler[elementId] = make_unique<IntegerArgumentMarshaler>();
     else
         throw ArgsException(ErrorCode::INVALID_FORMAT, elementId);
 }
 
-bool Args::validateSchemaElementId(char elementId) {
-    return isalpha(elementId);
+void Args::validateSchemaElementId(char elementId) {
+    if(!isalpha(elementId))
+        throw ArgsException(ErrorCode::INVALID_ARGUMEMNT_NAME, elementId);
 }
 
-bool Args::isStringSchemaElement(string elementTail) {
+bool Args::isStringSchemaElement(const string& elementTail) {
     return elementTail == "*";
 }
-bool Args::isBooleanSchemaElement(string elementTail) {
+bool Args::isBooleanSchemaElement(const string& elementTail) {
     return elementTail.length() == 0;
 }
-bool Args::isIntegerSchemaElement(string elementTail) {
+bool Args::isIntegerSchemaElement(const string& elementTail) {
     return elementTail == "#";
 }
 
 void Args::parseArguments() {
-    if (args.size() == 0)
-        return;
     for (currentArgument = 0; static_cast<size_t>(currentArgument) < args.size(); currentArgument++)
     {
         string arg = args[currentArgument];
         parseArgument(arg);
     }
-    return;
 }
 
-void Args::parseArgument(string arg) {
+void Args::parseArgument(const string& arg) {
     if (!arg.empty() && arg.front() == '-')
         parseElements(arg);
 }
 
-void Args::parseElements(string arg) {
+void Args::parseElements(const string& arg) {
     for (std::size_t i = 1; i < arg.length(); i++)
         parseElement(arg[i]);
 }
