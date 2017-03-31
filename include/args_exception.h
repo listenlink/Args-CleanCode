@@ -30,6 +30,18 @@ public:
         errorArgumentId = id;
         setMessage();
     }
+    ErrorCode getErrorCode() const {
+        return errorCode;
+    }
+
+    char getErrorArgumentId() const {
+        return errorArgumentId;
+    }
+
+    const std::string& getErrorParameter() const {
+        return errorParameter;
+    }
+
     virtual const char* what() const throw() {
         return exceptionMsg.c_str();
     }
@@ -54,6 +66,10 @@ private:
             case INVALID_FORMAT:
                 exceptionMsg = string(fmt::sprintf("Argument: %c has invalid format.", errorArgumentId));
                 break;
+            case ErrorCode::INVALID_DOUBLE:
+                exceptionMsg = string(fmt::sprintf("Argument -%c expects a double but was '%s'", errorArgumentId, errorParameter));
+            case ErrorCode::MISSING_DOUBLE:
+                exceptionMsg = string(fmt::sprintf("Could not find double parameter for : %c", errorArgumentId));
             default:
                 exceptionMsg = "";
         }
