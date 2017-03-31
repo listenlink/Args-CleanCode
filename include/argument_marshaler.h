@@ -13,9 +13,12 @@ typedef struct _object {
 
 } object;
 
+using ArgumentStringsType = std::vector<std::string>;
+using ArgumentStringIterator = ArgumentStringsType::iterator;
+
 class ArgumentMarshaler {
 public:
-    virtual void set(std::string d) = 0;
+    virtual ArgumentStringIterator set(const ArgumentStringIterator& begin, const ArgumentStringIterator& end) = 0;
     virtual object get() = 0;
     virtual ~ArgumentMarshaler() {};
 };
@@ -23,7 +26,13 @@ public:
 class BoolArgumentMarshaler : public ArgumentMarshaler {
 public:
     BoolArgumentMarshaler() : value(false) {}
-    void set(std::string) { value.Boolean = true; }//TODO
+    ArgumentStringIterator set(const ArgumentStringIterator& begin, const ArgumentStringIterator& end) {
+        if (begin >= end) {
+            assert(false);
+        }
+        value.Boolean = true;
+        return begin;
+    }
     object get() { return value; }
     ~BoolArgumentMarshaler() {}
 private:
@@ -33,8 +42,13 @@ private:
 class StringArgumentMarshaler : public ArgumentMarshaler {
 public:
     StringArgumentMarshaler() :value(std::string()) {}
-    void set(std::string v) {
-        value.String = v;
+    ArgumentStringIterator set(const ArgumentStringIterator& begin, const ArgumentStringIterator& end) {
+        auto stringIt = begin + 1;
+        if (stringIt >= end) {
+            throw ArgsException(ArgsException::ErrorCode::MISSING_STRING);
+        }
+        value.String = *stringIt;
+        return stringIt;
     }
     object get() { return value; }
     ~StringArgumentMarshaler() {}
@@ -45,8 +59,22 @@ private:
 class IntegerArgumentMarshaler : public ArgumentMarshaler {
 public:
     IntegerArgumentMarshaler() :value(0) {}
-    void set(std::string v) {
-        value.Integer = std::stoi(v);
+    ArgumentStringIterator set(const ArgumentStringIterator& begin, const ArgumentStringIterator& end) {
+        auto intIt = begin + 1;
+        if (intIt >= end) {
+            throw ArgsException(ArgsException::ErrorCode::MISSING_INTEGER);
+        }
+
+        try {
+            value.Integer = std::stoi(*intIt);
+        }
+        catch (std::invalid_argument) {
+            auto e = ArgsException(ArgsException::ErrorCode::INVALID_INTEGER);
+            e.setErrorParameter(*intIt);
+            throw e;
+        }
+
+        return intIt;
     }
     object get() { return value; }
     ~IntegerArgumentMarshaler() {}

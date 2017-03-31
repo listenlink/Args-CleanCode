@@ -23,8 +23,6 @@ public:
     void parseElements(const string& arg);
     void parseElement(char argChar);
 
-    bool setArgument(char argChar);
-
     int cardinality();
     string usage();
 
@@ -46,5 +44,6 @@ private:
     vector<string> args;
     map<char, unique_ptr<ArgumentMarshaler>> marshaler;
     set<char> argsFound = {};
-    int currentArgument;
+    vector<string>::iterator currentArgument;
+    vector<string>::iterator nextArgIt;
 };

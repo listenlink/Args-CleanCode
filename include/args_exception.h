@@ -20,7 +20,14 @@ public:
         errorCode(error_code), errorArgumentId(errorId), errorParameter(params) {
         setMessage();
     }
-
+    void setErrorParameter(const std::string& parameter) {
+        errorParameter = parameter;
+        setMessage();
+    }
+    void setErrorArgumentId(char id) {
+        errorArgumentId = id;
+        setMessage();
+    }
     virtual const char* what() const throw() {
         return exceptionMsg.c_str();
     }

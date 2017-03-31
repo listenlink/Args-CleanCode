@@ -29,7 +29,6 @@ void Args::parseSchema() {
         start_pos = find_pos + 1;
         parseSchemaElement(schema.substr(begin, end - begin + 1));
     } while (find_pos != std::string::npos);
-    return;
 }
 
 void Args::parseSchemaElement(const string& element) {
@@ -63,10 +62,8 @@ bool Args::isIntegerSchemaElement(const string& elementTail) {
 }
 
 void Args::parseArguments() {
-    for (currentArgument = 0; static_cast<size_t>(currentArgument) < args.size(); currentArgument++)
-    {
-        string arg = args[currentArgument];
-        parseArgument(arg);
+    for (currentArgument = args.begin(); currentArgument != args.end(); currentArgument++) {
+        parseArgument(*currentArgument);
     }
 }
 
@@ -81,35 +78,20 @@ void Args::parseElements(const string& arg) {
 }
 
 void Args::parseElement(char argChar) {
-    if (setArgument(argChar))
-        argsFound.insert(argChar);
-    else
-        throw ArgsException(ErrorCode::UNEXPECTED_ARGUMENT, argChar);
-}
+    auto argMarshalerIter = marshaler.find(argChar);
+    if (argMarshalerIter == marshaler.end()) {
+        throw ArgsException(ArgsException::ErrorCode::UNEXPECTED_ARGUMENT, argChar);
+    }
 
-bool Args::setArgument(char argChar) {
-    auto marshalIter = marshaler.find(argChar);
-    if (marshalIter == marshaler.end())
-        return false;
     try {
-        if (dynamic_cast<BoolArgumentMarshaler*>(marshalIter->second.get()))
-            marshalIter->second->set("true");
-        else {
-            currentArgument++;
-            marshalIter->second->set(args.at(currentArgument));
-        }
+        auto lastArgParsed = argMarshalerIter->second->set(currentArgument, args.end());
+        currentArgument += lastArgParsed - currentArgument;
     }
-    catch (std::out_of_range e) {
-        if(dynamic_cast<StringArgumentMarshaler*>(marshalIter->second.get()))
-            throw ArgsException(ErrorCode::MISSING_STRING, argChar);
-        else
-            throw ArgsException(ErrorCode::MISSING_INTEGER, argChar);
-    } 
-    catch (std::invalid_argument e) {
-        throw ArgsException(ErrorCode::INVALID_INTEGER, argChar, args.at(currentArgument));
-
+    catch (ArgsException & e) {
+        e.setErrorArgumentId(argChar);
+        throw e;
     }
-    return true;
+    argsFound.insert(argChar);
 }
 
 int Args::cardinality() {
